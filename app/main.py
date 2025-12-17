@@ -42,6 +42,29 @@ def create_application() -> FastAPI:
     setup_routers(app)  # Mount API route handlers
     
     return app
+    
+def setup_routers(app: FastAPI) -> None:
+ # ✅ ROOT ENDPOINT
+    @app.get("/", tags=["Root"])
+    async def root():
+        return {
+            "message": "🚀 Audit Trail Backend is running",
+            "docs": "/api/docs",
+            "health": "/health"
+        }
+
+    @app.get("/health", tags=["Health"])
+    async def health_check():
+        db_healthy = check_db_connection()
+        pool_stats = get_pool_stats()
+
+        return {
+            "status": "healthy" if db_healthy else "unhealthy",
+            "database": "connected" if db_healthy else "disconnected",
+            "pool_stats": pool_stats,
+            "timestamp": time.time(),
+            "version": settings.APP_VERSION
+        }
 
 def setup_middleware(app: FastAPI) -> None:
     """Configure application middleware - runs on every request/response"""
@@ -210,3 +233,4 @@ if __name__ == "__main__":
         reload=settings.DEBUG,  # Auto-reload on code changes (development only)
         log_level="debug" if settings.DEBUG else "info"
     )
+

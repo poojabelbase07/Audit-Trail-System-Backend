@@ -84,7 +84,7 @@ def get_audit_logs(
     logger.info(f"✅ Returning {len(logs)} audit logs (total: {total})")
     
     return AuditLogListResponse(
-        logs=[AuditLogResponse.from_orm(log) for log in logs],
+        logs=[AuditLogResponse.model_validate(log) for log in logs],  # Pydantic V2
         total=total,
         page=page,
         page_size=page_size
@@ -129,7 +129,7 @@ def get_audit_log(
         )
     
     logger.info(f"✅ Returning audit log {log_id}")
-    return AuditLogResponse.from_orm(log)
+    return AuditLogResponse.model_validate(log)  # Pydantic V2
 
 @router.get("/stats", response_model=AuditStatsResponse)
 def get_audit_stats(
@@ -228,7 +228,7 @@ def get_my_history(
     logger.info(f"✅ Returning {len(logs)} history entries")
     
     return AuditLogListResponse(
-        logs=[AuditLogResponse.from_orm(log) for log in logs],
+        logs=[AuditLogResponse.model_validate(log) for log in logs],  # Pydantic V2
         total=total,
         page=page,
         page_size=page_size

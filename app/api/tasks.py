@@ -71,7 +71,7 @@ def get_tasks(
     logger.info(f"✅ Returning {len(tasks)} tasks (total: {total})")
     
     return TaskListResponse(
-        tasks=[TaskResponse.from_orm(task) for task in tasks],
+        tasks=[TaskResponse.model_validate(task) for task in tasks],  # Pydantic V2
         total=total,
         page=page,
         page_size=page_size
@@ -117,7 +117,7 @@ def get_task(
             )
     
     logger.info(f"✅ Returning task {task_id}")
-    return TaskResponse.from_orm(task)
+    return TaskResponse.model_validate(task)  # Pydantic V2
 
 @router.post("", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
 def create_task(
@@ -173,7 +173,7 @@ def create_task(
         # Log creation in audit trail
         log_task_create(db=db, user=current_user, task=new_task, request=request)
         
-        return TaskResponse.from_orm(new_task)
+        return TaskResponse.model_validate(new_task)  # Pydantic V2
         
     except Exception as e:
         db.rollback()
@@ -285,7 +285,7 @@ def update_task(
             request=request
         )
         
-        return TaskResponse.from_orm(task)
+        return TaskResponse.model_validate(task)  # Pydantic V2
         
     except Exception as e:
         db.rollback()

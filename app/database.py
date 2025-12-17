@@ -2,7 +2,7 @@
 Database Session Management - Core database connectivity layer
 """
 
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
@@ -79,7 +79,7 @@ def check_db_connection() -> bool:
     """
     try:
         db = SessionLocal()  # Attempt to create session
-        db.execute("SELECT 1")  # Execute simple query to verify connectivity
+        db.execute(text("SELECT 1")) # Execute simple query to verify connectivity
         db.close()  # Clean up test session
         logger.info("✅ Database connection successful")
         return True

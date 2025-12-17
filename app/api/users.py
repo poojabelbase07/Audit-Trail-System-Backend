@@ -4,7 +4,7 @@ Users API - User management endpoints (admin only)
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 import logging
 
@@ -16,7 +16,7 @@ from app.core.dependencies import get_current_admin_user
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-@router.get("", response_model=list[UserResponse])
+@router.get("", response_model=List[UserResponse])  # Use List from typing
 def get_all_users(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -53,7 +53,7 @@ def get_all_users(
     
     logger.info(f"✅ Returning {len(users)} users (total: {total})")
     
-    return [UserResponse.from_orm(user) for user in users]
+    return [UserResponse.model_validate(user) for user in users]  # Pydantic V2
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user_by_id(
@@ -82,7 +82,7 @@ def get_user_by_id(
         )
     
     logger.info(f"✅ Returning user {user_id}")
-    return UserResponse.from_orm(user)
+    return UserResponse.model_validate(user)  # Pydantic V2
 
 @router.patch("/{user_id}/deactivate", response_model=UserResponse)
 def deactivate_user(
@@ -129,7 +129,7 @@ def deactivate_user(
         db.commit()
         db.refresh(user)
         logger.info(f"✅ User {user_id} deactivated")
-        return UserResponse.from_orm(user)
+        return UserResponse.model_validate(user)  # Pydantic V2
     except Exception as e:
         db.rollback()
         logger.error(f"❌ Failed to deactivate user: {str(e)}", exc_info=True)
@@ -173,7 +173,7 @@ def activate_user(
         db.commit()
         db.refresh(user)
         logger.info(f"✅ User {user_id} activated")
-        return UserResponse.from_orm(user)
+        return UserResponse.model_validate(user)  # Pydantic V2
     except Exception as e:
         db.rollback()
         logger.error(f"❌ Failed to activate user: {str(e)}", exc_info=True)

@@ -52,7 +52,7 @@ class UserResponse(UserBase):
     last_login: Optional[datetime]  # Last successful login (None if never logged in)
     
     class Config:
-        orm_mode = True  # Allow creation from SQLAlchemy models
+        from_attributes = True  # Pydantic V2 - replaces orm_mode
 
 class UserUpdate(BaseModel):
     """Schema for updating user profile"""

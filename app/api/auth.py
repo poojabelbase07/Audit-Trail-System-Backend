@@ -79,7 +79,7 @@ def register(
         return TokenResponse(
             access_token=access_token,
             token_type="bearer",
-            user=UserResponse.from_orm(new_user)
+            user=UserResponse.model_validate(new_user)  # Pydantic V2
         )
         
     except Exception as e:
@@ -171,7 +171,7 @@ def login(
     return TokenResponse(
         access_token=access_token,
         token_type="bearer",
-        user=UserResponse.from_orm(user)
+        user=UserResponse.model_validate(user)  # Pydantic V2
     )
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
@@ -217,4 +217,4 @@ def get_current_user_info(
         UserResponse with current user's info
     """
     logger.debug(f"➡️  Profile request from: {current_user.email}")
-    return UserResponse.from_orm(current_user)
+    return UserResponse.model_validate(current_user)  # Pydantic V2

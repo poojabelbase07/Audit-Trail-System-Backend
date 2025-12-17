@@ -3,7 +3,7 @@ Audit Log Schemas - Pydantic models for audit log responses
 """
 
 from pydantic import BaseModel
-from typing import Optional, Any
+from typing import Optional, Any, List
 from datetime import datetime
 from uuid import UUID
 
@@ -26,11 +26,11 @@ class AuditLogResponse(BaseModel):
     status: str  # "success" or "failure"
     
     class Config:
-        orm_mode = True  # Allow creation from SQLAlchemy models
+        from_attributes = True  # Pydantic V2 - replaces orm_mode
 
 class AuditLogListResponse(BaseModel):
     """Schema for paginated audit log list"""
-    logs: list[AuditLogResponse]  # List of audit logs
+    logs: List[AuditLogResponse]  # List of audit logs (using List from typing)
     total: int  # Total count
     page: int  # Current page
     page_size: int  # Items per page
